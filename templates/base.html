@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS Admin Panel</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Toast Notification Container -->
+    <div id="toast-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast {{ message.tags }}">
+                    <i class="fas 
+                        {% if message.tags == 'success' %}fa-check-circle
+                        {% elif message.tags == 'error' %}fa-times-circle
+                        {% elif message.tags == 'warning' %}fa-exclamation-triangle
+                        {% else %}fa-info-circle{% endif %}">
+                    </i>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Admin Panel Container -->
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <i class="fas fa-users-cog logo-icon"></i>
+                    <h2 class="logo-text">EMS</h2>
+                </div>
+                <div class="user-info">
+                    <img src="{% static 'images/user.png' %}" alt="User" class="user-avatar">
+                    <div class="user-details">
+                        <span class="user-name">{{ user.username|default:"Admin" }}</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <ul class="nav-links">
+                    <li class="nav-item">
+                        <a href="{% url 'home' %}" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'profile' %}" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'form_list' %}" class="nav-link">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Forms</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'employee_list' %}" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Employees</span>
+                        </a>
+                    </li>
+                    <li class="nav-divider"></li>
+                    <li class="nav-item">
+                        <a href="{% url 'change_password' %}" class="nav-link">
+                            <i class="fas fa-key"></i>
+                            <span>Change Password</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Employee Management System</h1>
+                </div>
+            </header>
+
+            <!-- Content Wrapper -->
+            <div class="content-wrapper">
+                <!-- Main Content -->
+                <div class="content-area">
+                    {% block content %}
+                    <!-- Content will be injected here by child templates -->
+                    {% endblock %}
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="main-footer">
+                <p>Designed with <i class="fas fa-heart" style="color:#e74c3c;"></i> for efficient management</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

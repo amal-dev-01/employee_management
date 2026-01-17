@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_employees_count|default:"0" }}</h3>
+                <p>Total Employees</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_form_count|default:"0" }}</h3>
+                <p>Total Forms</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Quick Actions and Upcoming Events -->
+    <div class="quick-events-row">
+        <!-- Quick Actions -->
+        <div class="quick-actions-card">
+            <div class="quick-actions-header">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <p>Frequently used actions</p>
+            </div>
+            <div class="quick-actions-grid">
+                <a href="{% url 'employee_list' %}" class="quick-action-btn">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <span>Add Employee</span>
+                </a>
+                <a href="{% url 'form_list' %}" class="quick-action-btn">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <span>Create Form</span>
+                </a>
+                <a href="{% url 'profile' %}" class="quick-action-btn">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <span>Update Profile</span>
+                </a>
+                <a href="{% url 'change_password' %}" class="quick-action-btn">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #1abc9c, #16a085);">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <span>Change Password</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Upcoming Forms -->
+       <div class="events-card">
+    <div class="events-header">
+        <h3><i class="fas fa-calendar-day"></i> Recent Forms</h3>
+        <a href="{% url 'form_create' %}" class="add-event">
+            <i class="fas fa-plus"></i> Add Form
+        </a>
+    </div>
+
+    <div class="events-list">
+        {% for form in recent_forms %}
+        <div class="event-item">
+            <div class="event-date">
+                <span class="event-day">{{ form.created_at|date:"d" }}</span>
+                <span class="event-month">{{ form.created_at|date:"M"|upper }}</span>
+            </div>
+
+            <div class="event-details">
+                <h4>{{ form.name }}</h4>
+                <p>{{ form.description|default:"No description provided" }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p style="padding: 10px;">No forms created yet</p>
+        {% endfor %}
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update Date and Time
+    function updateDateTime() {
+        const now = new Date();
+        const date = now.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        const time = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        
+        document.getElementById('currentDate').textContent = date;
+        document.getElementById('currentTime').textContent = time;
+    }
+    
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+    
+    // Quick Action Buttons Animation
+    const quickActionBtns = document.querySelectorAll('.quick-action-btn');
+    quickActionBtns.forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+ 
+});
+</script>
+{% endblock %}

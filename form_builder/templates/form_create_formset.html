@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Create Form{% endblock %}
+{% block breadcrumb %}Forms{% endblock %}
+
+{% block content %}
+<div class="form-create-container">
+    <h2>Create Dynamic Form</h2>
+        {% if form.errors or formset.errors %}
+    <div class="form-errors-container">
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+                <strong>Please correct the errors below:</strong>
+                {% if form.non_field_errors %}
+                <ul>
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if formset.non_form_errors %}
+                <ul>
+                    {% for error in formset.non_form_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="dynamic-form">
+        {% csrf_token %}
+
+        <!-- CustomForm fields -->
+        <div class="form-section">
+            <h3>Form Information</h3>
+            {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error-text">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Fields Section -->
+        <div class="fields-section">
+            <div class="section-header">
+                <h3>Form Fields</h3>
+                <button type="button" class="btn-add" id="add-field">
+                    <i class="fas fa-plus"></i> Add Field
+                </button>
+            </div>
+
+            {{ formset.management_form }}
+            <div id="fields-container">
+                {% for f in formset %}
+                <div class="field-row">
+                    <div class="field-drag">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="field-inputs">
+                        <div class="input-group">
+                            {{ f.label.label_tag }}
+                            {{ f.label }}
+                        </div>
+                        <div class="input-group">
+                            {{ f.field_type.label_tag }}
+                            {{ f.field_type }}
+                        </div>
+                        {{ f.order }}
+                    </div>
+                    <div class="field-actions">
+                        <button type="button" class="btn-remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        {{ f.DELETE }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+                <a href="{% url 'form_list' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-save"></i> Create Form
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+/* Container */
+.form-create-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h2 {
+    color: var(--dark-gray);
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+/* Sections */
+.form-section,
+.fields-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #e0e6ed;
+}
+
+h3 {
+    color: var(--dark-gray);
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--medium-gray);
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+}
+
+.error-text {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-add {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-add:hover {
+    background: var(--gradient-secondary);
+    transform: translateY(-1px);
+}
+
+/* Fields Container */
+#fields-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Field Row */
+.field-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e0e6ed;
+    transition: all 0.3s ease;
+}
+
+.field-row:hover {
+    border-color: var(--primary-blue);
+    background: #f1f8ff;
+}
+
+/* Drag Handle */
+.field-drag {
+    cursor: grab;
+    color: var(--light-gray);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.field-drag:hover {
+    color: var(--primary-blue);
+}
+
+/* Field Inputs */
+.field-inputs {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 600px) {
+    .field-inputs {
+        grid-template-columns: 1fr;
+    }
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 13px;
+    color: var(--medium-gray);
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.input-group input,
+.input-group select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+/* Field Actions */
+.field-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-remove {
+    background: #ffebee;
+    color: #e74c3c;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-remove:hover {
+    background: #e74c3c;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Hide Django's default hidden fields */
+input[name$="-order"],
+input[name$="-DELETE"] {
+    display: none;
+}
+
+/* Form Actions */
+.form-actions {
+    text-align: right;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-submit {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    background: var(--gradient-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.btn-cancel,
+.btn-delete {
+    padding: 10px 25px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 160px;
+    justify-content: center;
+}
+
+.btn-cancel {
+    background: #f8f9fa;
+    color: var(--medium-gray);
+    border: 1px solid #ddd;
+}
+
+.btn-cancel:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('fields-container');
+    const addButton = document.getElementById('add-field');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+
+    // Initialize SortableJS
+    Sortable.create(container, {
+        animation: 150,
+        handle: '.field-drag',
+        ghostClass: 'dragging',
+        onEnd: updateOrderInputs
+    });
+
+    // Update order inputs
+    function updateOrderInputs() {
+        const rows = container.querySelectorAll('.field-row');
+        rows.forEach((row, index) => {
+            const orderInput = row.querySelector('input[name$="-order"]');
+            if(orderInput) orderInput.value = index;
+        });
+    }
+
+    // Remove field row
+    container.addEventListener('click', function(e) {
+        if(e.target.closest('.btn-remove')) {
+            const row = e.target.closest('.field-row');
+            const deleteInput = row.querySelector('input[name$="-DELETE"]');
+            
+            if(deleteInput) {
+                deleteInput.value = 'on';
+                row.style.display = 'none';
+            } else {
+                row.remove();
+            }
+            
+            updateOrderInputs();
+            totalForms.value = container.querySelectorAll('.field-row').length;
+        }
+    });
+
+    // Add new field row
+    addButton.addEventListener('click', function () {
+        const currentCount = parseInt(totalForms.value);
+        const newIndex = currentCount;
+        
+        // Create new row
+        const newRow = document.createElement('div');
+        newRow.className = 'field-row';
+        
+        newRow.innerHTML = `
+            <div class="field-drag">
+                <i class="fas fa-grip-vertical"></i>
+            </div>
+            <div class="field-inputs">
+                <div class="input-group">
+                    <label for="id_form-${newIndex}-label">Label:</label>
+                    <input type="text" name="form-${newIndex}-label" maxlength="100" id="id_form-${newIndex}-label">
+                </div>
+                <div class="input-group">
+                    <label for="id_form-${newIndex}-field_type">Field type:</label>
+                    <select name="form-${newIndex}-field_type" id="id_form-${newIndex}-field_type">
+                        <option value="text">Text</option>
+                        <option value="number">Number</option>
+                        <option value="email">Email</option>
+                        <option value="date">Date</option>
+                        <option value="select">Password</option>
+                    </select>
+                </div>
+                <input type="hidden" name="form-${newIndex}-order" value="${newIndex}">
+                <input type="hidden" name="form-${newIndex}-DELETE">
+            </div>
+            <div class="field-actions">
+                <button type="button" class="btn-remove">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(newRow);
+        totalForms.value = currentCount + 1;
+        updateOrderInputs();
+    });
+
+    // Initial update
+    updateOrderInputs();
+});
+</script>
+{% endblock %}

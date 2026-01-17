@@ -1,0 +1,102 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* ================== Toast Messages ================== */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    min-width: 200px;
+    margin-bottom: 10px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    opacity: 0.95;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+    animation: slide-in 0.5s, fade-out 0.5s 4.5s;
+}
+
+.toast.success { background-color: #28a745; }
+.toast.error { background-color: #dc3545; }
+.toast.info { background-color: #17a2b8; }
+.toast.warning { background-color: #ffc107; color: #000; }
+
+@keyframes slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 0.95; }
+}
+
+@keyframes fade-out {
+    from { opacity: 0.95; }
+    to { opacity: 0; }
+}
+
+/* ================== Login/Register Form ================== */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1abc9c, #3498db);
+    padding: 20px;
+}
+
+.auth-container form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+}
+
+.auth-container form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.auth-container form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.auth-container form button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #1abc9c;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth-container form button:hover {
+    background-color: #16a085;
+}
+
+.auth-container form a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #3498db;
+    text-decoration: none;
+}
+.auth-container form a:hover {
+    text-decoration: underline;
+}
+

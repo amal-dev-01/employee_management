@@ -1,0 +1,15 @@
+{% extends 'base_auth.html' %}
+{% block content %}
+<form method="post">
+    <h2>Register</h2>
+    {% csrf_token %}
+    {{ form.username.label_tag }}<br>{{ form.username }}
+    {{ form.name.label_tag }}<br>{{ form.name }}
+    {{ form.phone_number.label_tag }}<br>{{ form.phone_number }}
+    {{ form.email.label_tag }}<br>{{ form.email }}
+    {{ form.password.label_tag }}<br>{{ form.password }}
+    {{ form.confirm_password.label_tag }}<br>{{ form.confirm_password }}
+    <button type="submit">Register</button>
+    <a href="{% url 'login' %}">Already have an account? Login</a>
+</form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS Auth</title>
+    <link rel="stylesheet" href="{% static 'css/auth_style.css' %}">
+</head>
+<body>
+
+<!-- Toast messages top-right -->
+<div id="toast-container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="toast {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="auth-container">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

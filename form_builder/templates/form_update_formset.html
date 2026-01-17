@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Update Form</h2>
+
+<form method="post" id="dynamic-form">
+    {% csrf_token %}
+
+    <div>
+        {{ form.name.label_tag }}<br>
+        {{ form.name }}
+
+        {{ form.description.label_tag }}<br>
+        {{ form.description }}
+    </div>
+
+    <h3>Fields</h3>
+
+    {{ formset.management_form }}
+
+    <div id="fields-container">
+        {% for f in formset %}
+        <div class="field-row">
+            {{ f.id }}
+
+            <span class="drag-handle">☰</span>
+
+            {{ f.label.label_tag }} {{ f.label }}
+            {{ f.field_type.label_tag }} {{ f.field_type }}
+
+            {{ f.order }}
+            {{ f.DELETE }}
+
+            <button type="button" class="remove-field-btn">Remove</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="add-field">Add Field</button>
+    <button type="submit">Update Form</button>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('fields-container');
+    const addButton = document.getElementById('add-field');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+
+    Sortable.create(container, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: updateOrder
+    });
+
+    function updateOrder() {
+        container.querySelectorAll('.field-row').forEach((row, index) => {
+            const orderInput = row.querySelector('input[name$="-order"]');
+            if (orderInput) orderInput.value = index;
+        });
+    }
+
+    container.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-field-btn')) {
+            e.target.closest('.field-row').remove();
+            totalForms.value = container.children.length;
+            updateOrder();
+        }
+    });
+
+    addButton.addEventListener('click', function () {
+        const count = parseInt(totalForms.value);
+        const newRow = container.children[0].cloneNode(true);
+
+        newRow.querySelectorAll('input, select').forEach(input => {
+            if (input.name.includes('-id')) input.value = '';
+            else if (input.type === 'checkbox') input.checked = false;
+            else input.value = '';
+        });
+
+        newRow.innerHTML = newRow.innerHTML.replace(/form-(\d+)-/g, `form-${count}-`);
+
+        container.appendChild(newRow);
+        totalForms.value = container.children.length;
+        updateOrder();
+    });
+
+    updateOrder();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Forms{% endblock %}
+{% block breadcrumb %}Forms{% endblock %}
+
+{% block content %}
+<div class="forms-page">
+    <!-- Simple Header with Create Button -->
+    <div class="page-header">
+        <h1>Forms</h1>
+        <a href="{% url 'form_create' %}" class="create-btn">Create New Form</a>
+    </div>
+
+    {% if forms %}
+    <!-- Forms Grid -->
+    <div class="forms-grid">
+        {% for f in forms %}
+        <div class="form-item">
+            <div class="form-header">
+                <i class="fas fa-file-alt"></i>
+                <h3>{{ f.name }}</h3>
+            </div>
+            
+            <div class="form-content">
+                {% if f.description %}
+                <p class="form-desc">{{ f.description }}</p>
+                {% endif %}
+                
+                <div class="form-info">
+                    <span class="info-item">
+                        <i class="fas fa-list"></i>
+                        {{ f.fields.count }} fields
+                    </span>
+                </div>
+                
+                <div class="form-fields">
+                    {% for field in f.fields.all %}
+                    <span class="field-tag">
+                        {{ field.label }}
+                        <small>({{ field.get_field_type_display }})</small>
+                    </span>
+                    {% empty %}
+                    <span class="field-tag empty">No fields added</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <i class="fas fa-file-alt"></i>
+        <h3>No Forms Found</h3>
+        <p>Create your first form to get started</p>
+        <a href="{% url 'form_create' %}" class="create-btn">Create Form</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Page Container */
+.forms-page {
+    padding: 20px;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    color: var(--dark-gray);
+    font-size: 24px;
+}
+
+.create-btn {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.create-btn:hover {
+    background: var(--gradient-secondary);
+    transform: translateY(-2px);
+}
+
+/* Forms Grid */
+.forms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Form Item */
+.form-item {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e0e6ed;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.form-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Form Header */
+.form-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-header i {
+    color: var(--primary-blue);
+    font-size: 18px;
+}
+
+.form-header h3 {
+    margin: 0;
+    flex: 1;
+    margin-left: 10px;
+    font-size: 16px;
+    color: var(--dark-gray);
+}
+
+.edit-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.edit-link:hover {
+    text-decoration: underline;
+}
+
+/* Form Content */
+.form-content {
+    padding: 20px;
+}
+
+.form-desc {
+    color: var(--light-gray);
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.form-info {
+    margin-bottom: 15px;
+}
+
+.info-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: var(--medium-gray);
+}
+
+.info-item i {
+    color: var(--primary-green);
+    font-size: 12px;
+}
+
+/* Form Fields */
+.form-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.field-tag {
+    background: #f1f8ff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--primary-blue);
+    border: 1px solid #d0e2ff;
+}
+
+.field-tag small {
+    color: #6c757d;
+    font-size: 11px;
+}
+
+.field-tag.empty {
+    background: #f8f9fa;
+    color: #6c757d;
+    border-color: #e9ecef;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: #dee2e6;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.empty-state h3 {
+    color: var(--dark-gray);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: var(--light-gray);
+    margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .forms-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
+</style>
+{% endblock %}
